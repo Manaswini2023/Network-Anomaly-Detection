@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Upload & Predict</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <style>
+    body, html {
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)),
+                  url('/static/background.png') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+    }
+
+    .navbar-custom {
+      background-color: rgba(10, 25, 47, 0.92) !important;
+    }
+
+    .main-card {
+      background-color: rgba(10, 25, 47, 0.92);
+      border-radius: 24px;
+      padding: 60px 50px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
+      max-width: 2400px;
+      margin: 3rem auto;
+      width: 95%;
+    }
+
+    .table-responsive {
+      max-height: 600px;
+      overflow-y: auto;
+      margin-top: 1.5rem;
+    }
+
+    .table-dark-custom {
+      width: 100%;
+      background-color: #1e1e1e;
+      color: #f5f5f5;
+      border: 1px solid #333;
+      font-size: 1rem;
+    }
+
+    .table-dark-custom th,
+    .table-dark-custom td {
+      border: 1px solid #333;
+      padding: 0.9rem;
+      vertical-align: middle;
+    }
+
+    .table-dark-custom tr:hover {
+      background-color: #2a2a2a;
+    }
+
+    .btn-info {
+      font-size: 1.2rem;
+      padding: 0.7rem 1.5rem;
+      font-weight: 600;
+      border-radius: 10px;
+    }
+
+    input[type="file"].form-control {
+      background-color: rgba(255,255,255,0.08);
+      color: white;
+      border: 1px solid #00bcd4;
+      font-size: 1.2rem;
+      padding: 1rem;
+      border-radius: 10px;
+    }
+
+    input[type="file"].form-control:focus {
+      background-color: rgba(255,255,255,0.12);
+      color: white;
+      border-color: #00bcd4;
+      box-shadow: none;
+    }
+
+    h2, h3 {
+      margin-top: 1rem;
+      font-weight: 600;
+      font-size: 2rem;
+      border-bottom: 1px solid #333;
+      padding-bottom: 0.4rem;
+    }
+
+    nav.navbar {
+      margin-bottom: 2.5rem;
+    }
+
+    .navbar-brand {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .nav-link, .btn-info {
+      font-size: 1.1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar with custom background -->
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">AnomalyDetector</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+  
+      <div class="collapse navbar-collapse justify-content-between" id="navbarContent">
+        <!-- Left-aligned nav links -->
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/upload">Upload</a>
+          </li>
+        </ul>
+  
+        <!-- Right-aligned logout button -->
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="btn btn-info text-white" href="/logout">Logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Card -->
+  <div class="main-card container">
+    <h2>Upload Network Data</h2>
+
+    <form action="/upload" method="post" enctype="multipart/form-data" class="mt-4">
+      <div class="mb-4">
+        <input type="file" name="file" class="form-control" required />
+      </div>
+      <button type="submit" class="btn btn-info text-white">Upload</button>
+    </form>
+
+
+    {% if uploaded_data %}
+    <h3 class="mt-12">Uploaded Data (Preview)</h3>
+  <div class="table-responsive">
+    <table class="table table-dark-custom table-striped table-bordered">
+      <thead>
+        <tr>
+          {% for col in uploaded_data[0].keys() %}
+            <th>{{ col }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in uploaded_data %}
+          <tr>
+            {% for value in row.values() %}
+              <td>{{ value }}</td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endif %}
+
+
+{% if prediction_data %}
+<h3 class="mt-5">Predicted Results</h3>
+<div class="table-responsive">
+  <table class="table table-dark-custom table-striped table-bordered">
+    <thead>
+      <tr>
+        {% for col in prediction_data[0].keys() %}
+          <th>{{ col }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in prediction_data %}
+        <tr>
+          {% for value in row.values() %}
+            <td>{{ value }}</td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
